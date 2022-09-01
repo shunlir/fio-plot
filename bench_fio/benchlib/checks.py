@@ -48,7 +48,10 @@ def check_target_type(target, filetype):
 
     keys = ["file", "device", "directory", "rbd"]
 
-    test = {keys[0]: Path.is_file, keys[1]: Path.is_block_device, keys[2]: Path.is_dir}
+    test = {
+	    keys[0]: Path.is_file,
+	    keys[1]: Path.is_block_device if os.name == 'posix' else lambda x: True,
+	    keys[2]: Path.is_dir}
 
     parameter = {keys[0]: "--filename", keys[1]: "--filename", keys[2]: "--directory"}
 

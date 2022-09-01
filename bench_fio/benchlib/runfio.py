@@ -31,8 +31,9 @@ def check_fio_version(settings):
 
 
 def drop_caches(settings):
-    command = ["echo", "3", ">", "/proc/sys/vm/drop_caches"]
-    run_raw_command(command)
+    if os.name == 'posix':
+        command = ["echo", "3", ">", "/proc/sys/vm/drop_caches"]
+        run_raw_command(command)
 
 
 def run_raw_command(command, env=None):
@@ -81,6 +82,11 @@ def run_fio(settings, benchmark):
     target_parameter = checks.check_target_type(benchmark["target"], settings["type"])
     if target_parameter:
         command.append(f"{target_parameter}={benchmark['target']}")
+    
+    if os.name == 'nt':
+        command.append("--thread=1")
+        
+    #print(command)
 
     if not settings["dry_run"]:
         supporting.make_directory(output_directory)
